@@ -9,7 +9,7 @@ public class CitizenBackgroundService : IHostedService
 {
     private readonly CitizenRepository _citizenRepository;
     private readonly HttpClient _httpClient;
-    public CitizenBackgroundService(CitizenRepository citizenRepository, HttpClient httpClient)
+    public CitizenBackgroundService(CitizenRepository citizenRepository, HttpClient httpClient, IServiceScopeFactory serviceScopeFactory)
     {
         _citizenRepository = citizenRepository;
         _httpClient = httpClient;
@@ -21,6 +21,8 @@ public class CitizenBackgroundService : IHostedService
         foreach(Citizen citizen in citizens)
         {
             var citizenJson = await _httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{citizen.Id}");
+            if (_citizenRepository.GetById(citizenJson.Id) != null)
+                continue;
             _citizenRepository.Add(citizenJson);
         }
 

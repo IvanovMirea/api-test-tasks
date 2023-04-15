@@ -26,7 +26,7 @@ public class CitizenController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<ResponseDto> GetAll([FromQuery]ModelFilter? filter, int page, int pageLimit)
+    public ActionResult<ResponseDto> GetAll([FromQuery]ModelFilter filter, int page, int pageLimit)
     {
         var result = _citizenRepo.GetAll(filter, page, pageLimit);
         return Ok(result);

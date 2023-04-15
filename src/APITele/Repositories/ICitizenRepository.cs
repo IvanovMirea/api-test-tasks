@@ -5,8 +5,8 @@ namespace APITele.Repositories;
 
 public interface ICitizenRepository
 {
-    ResponseDto GetAll(ModelFilter? filter, int page, int pageLimit);
-    Citizen? GetById(string id);
-    Citizen Add(Citizen citizen);
-    bool Delete(string id);
+    Task<ResponseDto> GetAll(ModelFilter? filter, int page, int pageLimit);
+    Task<Citizen?> GetById(string id);
+    Task<Citizen> Add(Citizen citizen);
+    Task<bool> Delete(string id);
 }
