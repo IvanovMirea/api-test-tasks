@@ -1,31 +1,32 @@
 ﻿using APITele.Repositories;
 using APITele.Models;
 using Newtonsoft.Json;
-
+using Microsoft.OpenApi.Writers;
 
 namespace APITele.BackgroundService;
 
 public class CitizenBackgroundService : IHostedService
 {
-    private readonly CitizenRepository _citizenRepository;
-    private readonly HttpClient _httpClient;
-    public CitizenBackgroundService(CitizenRepository citizenRepository, HttpClient httpClient, IServiceScopeFactory serviceScopeFactory)
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IHttpClientFactory _httpClientFactory;
+    public CitizenBackgroundService(IServiceScopeFactory serviceScopeFactory, IHttpClientFactory httpClientFactory)
     {
-        _citizenRepository = citizenRepository;
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var citizens = await _httpClient.GetFromJsonAsync<Citizen[]>("https://testlodtask20172.azurewebsites.net/task");
+        var repository = _serviceScopeFactory.CreateScope().ServiceProvider.GetService<CitizenRepository>();
+        var httpClient = _httpClientFactory.CreateClient();
+        var citizens = await httpClient.GetFromJsonAsync<Citizen[]>("https://testlodtask20172.azurewebsites.net/task");
         foreach(Citizen citizen in citizens)
         {
-            var citizenJson = await _httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{citizen.Id}");
-            if (_citizenRepository.GetById(citizenJson.Id) != null)
+            var citizenJson = await httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{citizen.Id}");
+            if (repository.GetById(citizenJson.Id) != null)
                 continue;
-            _citizenRepository.Add(citizenJson);
+            repository.Add(citizenJson);
         }
-
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

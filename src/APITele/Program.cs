@@ -7,17 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHostedService<CitizenBackgroundService>();
 
-//var services = new ServiceCollection();
-//var serviceProvider = services.BuildServiceProvider();
-//var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-//var citizenScopedFactory = serviceProvider.GetService<CitizenRepository>();
-
-//services.AddHttpClient("apiClient", client =>
-//{
-//    client.BaseAddress = new Uri("https://testlodtask20172.azurewebsites.net/task");
-//});
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
