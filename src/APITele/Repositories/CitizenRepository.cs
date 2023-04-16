@@ -15,7 +15,7 @@ public class CitizenRepository : ICitizenRepository
 
     public async Task<Citizen?> GetById(string id)
     {
-        var result = _db.Citizens.AsNoTracking().FirstOrDefault(x => x.Id == id);
+        var result = await _db.Citizens.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         if (result == null)
             return null;
         return result;
@@ -35,25 +35,25 @@ public class CitizenRepository : ICitizenRepository
         if (filter == null)
             citizens = _db.Citizens.AsQueryable();
         //pagination
-        double total = citizens.Count();
-        var result = citizens.Skip(offset).Take(pageLimit).AsNoTracking().ToList();
+        double total = await citizens.CountAsync();
+        var result = await citizens.Skip(offset).Take(pageLimit).AsNoTracking().ToListAsync();
         return new() { Citizens = result, Total = (int)total, Limit = pageLimit };
     }
 
     public async Task<Citizen> Add(Citizen citizen)
     {
-        _db.Add(citizen);
-        _db.SaveChanges();
+        await _db.AddAsync(citizen);
+        await _db.SaveChangesAsync();
         return citizen;
     }
 
     public async Task<bool> Delete(string id)
     {
-        var citizen = _db.Citizens.AsNoTracking().FirstOrDefault(x => x.Id == id);
+        var citizen = await _db.Citizens.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         if (citizen == null) 
             return false;
         _db.Remove(citizen);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
         return true;
     }
 }

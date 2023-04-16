@@ -2,6 +2,7 @@
 using APITele.Models;
 using Newtonsoft.Json;
 using Microsoft.OpenApi.Writers;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace APITele.BackgroundService;
 
@@ -23,9 +24,9 @@ public class CitizenBackgroundService : IHostedService
         foreach(Citizen citizen in citizens)
         {
             var citizenJson = await httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{citizen.Id}");
-            if (repository.GetById(citizenJson.Id) != null)
+            if (await repository.GetById(citizenJson.Id) != null)
                 continue;
-            repository.Add(citizenJson);
+            await repository.Add(citizenJson);
         }
     }
 
