@@ -34,7 +34,7 @@ public class CitizenBackgroundService : IHostedService
             {
                 throw new ArgumentException("Person with this id not found");
             }
-            if (await repository.GetByIdAsync(externalCitizen.Id) != null)
+            if (await repository.GetByIdAsync(citizen.Id) != null)
                 continue;
             citizen.Age = externalCitizen.Age;
             await repository.AddAsync(citizen);

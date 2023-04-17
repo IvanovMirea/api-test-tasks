@@ -25,10 +25,13 @@ public class CitizenController : ControllerBase
         return Ok(result);
     }
 
-    //citizencontrollertest
     [HttpGet]
     public async Task<ActionResult<ResponseDto>> GetAll([FromQuery]ModelFilter filter, int offset, int limit)
     {
+        if(limit == 0)
+        {
+            limit = 10;
+        }
         var result = await _citizenRepo.GetAllAsync(filter, offset, limit);
         return Ok(result);
     }
