@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APITeleTests;
 
-public class Tests
+public class CitizenControllerTest
 {
     [SetUp]
     public void Setup()

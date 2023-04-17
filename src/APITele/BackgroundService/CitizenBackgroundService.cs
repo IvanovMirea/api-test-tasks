@@ -13,7 +13,6 @@ public class CitizenBackgroundService : IHostedService
     private readonly IExternalCitizensClient _externalCitizensClient;
     public CitizenBackgroundService(IServiceScopeFactory serviceScopeFactory, IExternalCitizensClient externalCitizensClient)
     {
-
         _serviceScopeFactory = serviceScopeFactory;
         _externalCitizensClient = externalCitizensClient;
     }
