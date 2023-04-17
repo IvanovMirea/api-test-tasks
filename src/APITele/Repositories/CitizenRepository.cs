@@ -16,12 +16,10 @@ public class CitizenRepository : ICitizenRepository
     public async Task<Citizen?> GetByIdAsync(string id)
     {
         var result = await _db.Citizens.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        if (result == null)
-            return null;
         return result;
     }
 
-    public async Task<ResponseDto> GetAllAsync(ModelFilter filter, int offset, int pageLimit)
+    public async Task<ResponseDto> GetAllAsync(ModelFilter filter, int offset, int limit)
     {
         var citizens = _db.Citizens.AsQueryable();
 
@@ -32,16 +30,14 @@ public class CitizenRepository : ICitizenRepository
             citizens = citizens.Where(x=> x.Age <= filter.MaxYear.Value);
         if (filter.Genders != null)
             citizens = citizens.Where(x=> x.Sex == filter.Genders);
-        if (filter == null)
-            citizens = _db.Citizens.AsQueryable();
         //pagination
         var total = await citizens.CountAsync();
-        var result = await citizens.Skip(offset).Take(pageLimit).AsNoTracking().ToListAsync();
+        var result = await citizens.Skip(offset).Take(limit).AsNoTracking().ToListAsync();
         return new()
         {
             Citizens = result,
             Total = total,
-            Limit = pageLimit,
+            Limit = limit,
             Offset = offset
         };
     }

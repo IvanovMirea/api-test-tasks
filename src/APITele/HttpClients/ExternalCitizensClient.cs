@@ -10,15 +10,11 @@ public class ExternalCitizensClient : IExternalCitizensClient
     {
         _httpClient = httpClient;
     }
-    public async Task<Citizen?> GetCitizenByIdAsync(string id)
-    {
-        var citizenJson = await _httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{id}");
-        return citizenJson;
-    }
+    public async Task<Citizen?> GetCitizenByIdAsync(string id) => 
+        await _httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{id}");
+    
 
-    public async Task<Citizen[]?> GetCitizensAsync()
-    {
-        var citizens = await _httpClient.GetFromJsonAsync<Citizen[]>("https://testlodtask20172.azurewebsites.net/task");
-        return citizens;
-    }
+    public async Task<Citizen[]?> GetCitizensAsync() => 
+        await _httpClient.GetFromJsonAsync<Citizen[]>("https://testlodtask20172.azurewebsites.net/task");
+
 }

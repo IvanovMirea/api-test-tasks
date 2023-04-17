@@ -7,11 +7,6 @@ namespace APITeleTests;
 
 public class CitizenControllerTest
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
     [Test]
     public async Task CitizenController_GetById_Returns_Ok()
     {
@@ -51,7 +46,10 @@ public class CitizenControllerTest
         var controller = new CitizenController(repositoryMock.Object);
         var result = await controller.GetAll(filter,0,1);
 
-        Assert.That(((OkObjectResult)result.Result).Value, Is.EqualTo(responseDto));
+        Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Citizens.Count(), Is.EqualTo(responseDto.Citizens.Count));
+        Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Total, Is.EqualTo(responseDto.Total));
+        Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Limit, Is.EqualTo(responseDto.Limit));
+        Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Offset, Is.EqualTo(responseDto.Offset));
     }
     [Test]
     public async Task CitizenController_GetAll_Returns_Ok_With_Empty_LIst()
