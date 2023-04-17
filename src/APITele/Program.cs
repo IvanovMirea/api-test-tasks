@@ -2,10 +2,13 @@ using APITele.Context;
 using Microsoft.EntityFrameworkCore;
 using APITele.Repositories;
 using APITele.BackgroundService;
+using APITele.HttpClients;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHostedService<CitizenBackgroundService>();
+
+builder.Services.AddHttpClient<IExternalCitizensClient, ExternalCitizensClient>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();

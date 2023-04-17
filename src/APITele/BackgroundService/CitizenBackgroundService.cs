@@ -1,5 +1,6 @@
 ﻿using APITele.Repositories;
 using APITele.Models;
+using APITele.HttpClients;
 using Newtonsoft.Json;
 using Microsoft.OpenApi.Writers;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
@@ -9,24 +10,34 @@ namespace APITele.BackgroundService;
 public class CitizenBackgroundService : IHostedService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly IHttpClientFactory _httpClientFactory;
-    public CitizenBackgroundService(IServiceScopeFactory serviceScopeFactory, IHttpClientFactory httpClientFactory)
+    private readonly IExternalCitizensClient _externalCitizensClient;
+    public CitizenBackgroundService(IServiceScopeFactory serviceScopeFactory, IExternalCitizensClient externalCitizensClient)
     {
-        _httpClientFactory = httpClientFactory;
+
         _serviceScopeFactory = serviceScopeFactory;
+        _externalCitizensClient = externalCitizensClient;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var repository = _serviceScopeFactory.CreateScope().ServiceProvider.GetService<CitizenRepository>();
-        var httpClient = _httpClientFactory.CreateClient();
-        var citizens = await httpClient.GetFromJsonAsync<Citizen[]>("https://testlodtask20172.azurewebsites.net/task");
-        foreach(Citizen citizen in citizens)
+        using var scope = _serviceScopeFactory.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<ICitizenRepository>();
+        var citizens = await _externalCitizensClient.GetCitizensAsync();
+        if (citizens == null)
         {
-            var citizenJson = await httpClient.GetFromJsonAsync<Citizen>($"https://testlodtask20172.azurewebsites.net/task/{citizen.Id}");
-            if (await repository.GetById(citizenJson.Id) != null)
+            throw new NullReferenceException("No citizens to process");
+        }
+        foreach(var citizen in citizens)
+        {
+            var externalCitizen = await _externalCitizensClient.GetCitizenByIdAsync(citizen.Id);
+            if (externalCitizen == null)
+            {
+                throw new ArgumentException("Person with this id not found");
+            }
+            if (await repository.GetByIdAsync(externalCitizen.Id) != null)
                 continue;
-            await repository.Add(citizenJson);
+            citizen.Age = externalCitizen.Age;
+            await repository.AddAsync(citizen);
         }
     }
 

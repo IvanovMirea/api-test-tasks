@@ -17,32 +17,19 @@ public class CitizenController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Citizen> GetById(string  id)
+    public async Task<ActionResult<Citizen>> GetById(string  id)
     {
-        var result = _citizenRepo.GetById(id);
+        var result = await _citizenRepo.GetByIdAsync(id);
         if (result == null)
             return NotFound("No resident with this id !");
         return Ok(result);
     }
 
+    //citizencontrollertest
     [HttpGet]
-    public ActionResult<ResponseDto> GetAll([FromQuery]ModelFilter filter, int page, int pageLimit)
+    public async Task<ActionResult<ResponseDto>> GetAll([FromQuery]ModelFilter filter, int offset, int limit)
     {
-        var result = _citizenRepo.GetAll(filter, page, pageLimit);
+        var result = await _citizenRepo.GetAllAsync(filter, offset, limit);
         return Ok(result);
-    }
-
-    [HttpPost]
-    public ActionResult<Citizen> Add(Citizen citizen)
-    {
-        var newCitizen = new Citizen(citizen.Id,citizen.Name, citizen.Age, citizen.Sex);
-        return Ok(_citizenRepo.Add(newCitizen));
-    }
-
-    [HttpDelete("{id}")]
-    public ActionResult<Citizen> Delete(string id)
-    {
-        var deleted = _citizenRepo.Delete(id);
-        return Ok(deleted);
     }
 }
