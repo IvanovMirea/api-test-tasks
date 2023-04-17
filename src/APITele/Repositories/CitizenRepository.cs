@@ -28,8 +28,8 @@ public class CitizenRepository : ICitizenRepository
             citizens = citizens.Where(x=>x.Age >= filter.MinYear.Value);
         if (filter.MaxYear != null)
             citizens = citizens.Where(x=> x.Age <= filter.MaxYear.Value);
-        if (filter.Genders != null)
-            citizens = citizens.Where(x=> x.Sex == filter.Genders);
+        if (filter.Sex != null)
+            citizens = citizens.Where(x=> x.Sex == filter.Sex);
         //pagination
         var total = await citizens.CountAsync();
         var result = await citizens.Skip(offset).Take(limit).AsNoTracking().ToListAsync();

@@ -14,7 +14,7 @@ public class CitizenControllerTest
         var repositoryMock = new Mock<ICitizenRepository>();
 
         repositoryMock.Setup(x => x.GetByIdAsync("string1")).ReturnsAsync(expectedResult);
-        var controller = new CitizenController(repositoryMock.Object);
+        var controller = new CitizensController(repositoryMock.Object);
         var result = await controller.GetById("string1");
 
         Assert.That(((Citizen)((OkObjectResult)result.Result).Value).Id, Is.EqualTo(expectedResult.Id));
@@ -25,7 +25,7 @@ public class CitizenControllerTest
         var repositoryMock = new Mock<ICitizenRepository>();
 
         repositoryMock.Setup(x => x.GetByIdAsync("string1")).ReturnsAsync(()=>null);
-        var controller = new CitizenController(repositoryMock.Object);
+        var controller = new CitizensController(repositoryMock.Object);
         var result = await controller.GetById("string1");
 
         Assert.IsInstanceOf<NotFoundObjectResult>(result.Result);
@@ -39,11 +39,11 @@ public class CitizenControllerTest
         List<Citizen> citizens = new List<Citizen>();
         citizens.Add(citizen);
         ResponseDto responseDto = new ResponseDto() { Citizens = citizens, Limit = 1, Offset = 0, Total = 1};
-        ModelFilter filter = new ModelFilter() { MaxYear = 100, MinYear = 0, Genders = Genders.Male};
+        ModelFilter filter = new ModelFilter() { MaxYear = 100, MinYear = 0, Sex = Genders.Male};
         var repositoryMock = new Mock<ICitizenRepository>();
 
         repositoryMock.Setup(x => x.GetAllAsync(filter,0,1)).ReturnsAsync(responseDto);
-        var controller = new CitizenController(repositoryMock.Object);
+        var controller = new CitizensController(repositoryMock.Object);
         var result = await controller.GetAll(filter,0,1);
 
         Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Citizens.Count(), Is.EqualTo(responseDto.Citizens.Count));
@@ -52,16 +52,16 @@ public class CitizenControllerTest
         Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Offset, Is.EqualTo(responseDto.Offset));
     }
     [Test]
-    public async Task CitizenController_GetAll_Returns_Ok_With_Empty_LIst()
+    public async Task CitizenController_GetAll_Returns_Ok_With_Empty_List()
     {
         List<Citizen> citizens = new();
         ResponseDto responseDto = new() { Citizens = citizens, Limit = 1, Offset = 0, Total = 1 };
-        ModelFilter filter = new ModelFilter() { MaxYear = 100, MinYear = 99, Genders = Genders.Male };
+        ModelFilter filter = new ModelFilter() { MaxYear = 100, MinYear = 99, Sex = Genders.Male };
 
         var repositoryMock = new Mock<ICitizenRepository>();
 
         repositoryMock.Setup(x => x.GetAllAsync(filter, 0, 1)).ReturnsAsync(responseDto);
-        var controller = new CitizenController(repositoryMock.Object);
+        var controller = new CitizensController(repositoryMock.Object);
         var result = await controller.GetAll(filter, 0, 1);
 
         Assert.That(((ResponseDto)((OkObjectResult)result.Result).Value).Citizens.Count(),Is.EqualTo(responseDto.Citizens.Count));

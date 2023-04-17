@@ -8,10 +8,10 @@ namespace APITele.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CitizenController : ControllerBase
+public class CitizensController : ControllerBase
 {
     private readonly ICitizenRepository _citizenRepo;
-    public CitizenController(ICitizenRepository citizenRepo)
+    public CitizensController(ICitizenRepository citizenRepo)
     {
         _citizenRepo = citizenRepo;
     }

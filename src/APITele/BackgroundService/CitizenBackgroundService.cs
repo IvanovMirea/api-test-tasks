@@ -29,12 +29,12 @@ public class CitizenBackgroundService : IHostedService
         foreach(var citizen in citizens)
         {
             var externalCitizen = await _externalCitizensClient.GetCitizenByIdAsync(citizen.Id);
+            if (await repository.GetByIdAsync(citizen.Id) != null)
+                continue;
             if (externalCitizen == null)
             {
                 throw new ArgumentException("Person with this id not found");
             }
-            if (await repository.GetByIdAsync(citizen.Id) != null)
-                continue;
             citizen.Age = externalCitizen.Age;
             await repository.AddAsync(citizen);
         }
